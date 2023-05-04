@@ -1,11 +1,13 @@
+---
+format: gfm
+---
 
-This repo contains ideas, code, and example data to estimate
-‘cyclability’ on transport networks.
+This repo contains ideas, code, and example data to estimate 'cyclability' on transport networks.
 
 ## What is cyclability?
 
-There are at least three definitions of how conducive to cycling
-different places, routes and segments of travel networks are:
+There are at least three definitions of how conducive to
+cycling different places, routes and segments of travel networks are:
 
 - [Level of Traffic
   Stress](https://docs.conveyal.com/learn-more/traffic-stress) (LTS)
@@ -22,9 +24,7 @@ different places, routes and segments of travel networks are:
 - CycleStreets’s [Quietness
   rating](https://www.cyclestreets.net/help/journey/howitworks/#quietness)
   from 1 (very unpleasant for cycling) to 100 (the quietest)
-  - The [BNA tool](https://bna.peopleforbikes.org/#/) which builds on
-    the concept of traffic stress to classify segments as Low Stress or
-    High Stress.
+  - The [BNA tool](https://bna.peopleforbikes.org/#/) which builds on the concept of traffic stress to classify segments as Low Stress or High Stress.
 
 ## Live examples
 
@@ -36,24 +36,18 @@ Source: https://nptscot.github.io/#14.75/55.94993/-3.19227
 
 ## Prior methodological work and implementations
 
-- The Bike Network Analysis (BNA) tool methodology:
-  https://cityratings.peopleforbikes.org/about/methodology
-- Discussion of cyclability in A/B Street issue tracker:
-  https://github.com/a-b-street/abstreet/issues/600
-- Gist in Python on GitHub calculating cyclability from OSM:
-  https://gist.github.com/aroche/d6fd03e51869c3e554f908bc14b5750b
+- The Bike Network Analysis (BNA) tool methodology: https://cityratings.peopleforbikes.org/about/methodology
+- Discussion of cyclability in A/B Street issue tracker: https://github.com/a-b-street/abstreet/issues/600
+- Gist in Python on GitHub calculating cyclability from OSM: https://gist.github.com/aroche/d6fd03e51869c3e554f908bc14b5750b
 - Methods described in by CycleStreets: [Quietness
   rating](https://www.cyclestreets.net/help/journey/howitworks/#quietness)
 
+
 ## Thoughts on next steps (draft)
 
-- [ ] Prototype code to generate plausible quietness ratings from
-  OpenStreetMap data
+- [ ] Prototype code to generate plausible quietness ratings from OpenStreetMap data
 - [ ] Wire up to a web interface
-- [ ] Create a frontent to allow people to tweak the parameters
-  affecting cyclability
-- [ ] Develop default settings e.g. for different types of users
-  (e.g. novice, experienced, confident) and implementations of different
-  metrics (e.g. Bikeability 1 to 3 or LTS 1 to 4)
-- [ ] Encode the settings that lead to these implementations in a human
-  readable and easy-to-edit format, e.g. JSON
+- [ ] Create a frontent to allow people to tweak the parameters affecting cyclability
+- [ ] Develop default settings e.g. for different types of users (e.g. novice, experienced, confident) and implementations of different metrics (e.g. Bikeability 1 to 3 or LTS 1 to 4)
+- [ ] Encode the settings that lead to these implementations in a human readable and easy-to-edit format, e.g. JSON
+
