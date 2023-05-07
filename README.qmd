@@ -111,12 +111,23 @@ plot(sf::st_geometry(leeds_osm_osm))
 ```
 
 The example dataset contains around 3k line segments and 200 keys with at least one value.
+The number of features by geometry type is shown in the table below.
+
+```{r}
+#| echo: false
+leeds_osm_geojson |>
+  mutate(geometry_type = sf::st_geometry_type(leeds_osm_geojson)) |>
+  sf::st_drop_geometry() |>
+  count(geometry_type) |>
+  knitr::kable()
+```
 
 #### Quietness
 
 A GeoJSON file with quietness estimates for each road segment in Leeds is available at https://github.com/ITSLeeds/cyclability/raw/main/cyclestreets/leeds_quietness.geojson and is illustrated below:
 
 ```{r}
+#| echo: false
 leeds_quietness = sf::read_sf("https://github.com/ITSLeeds/cyclability/raw/main/cyclestreets/leeds_quietness.geojson")
 plot(leeds_quietness["quietness"])
 leeds_quietness |>

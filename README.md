@@ -79,10 +79,17 @@ The first 10 keys in the OSM dataset that have at least one value are:
 
 The OSM data can be seen in the map below:
 
-![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
 
 The example dataset contains around 3k line segments and 200 keys with
-at least one value.
+at least one value. The number of features by geometry type is shown in
+the table below.
+
+| geometry_type |    n |
+|:--------------|-----:|
+| POINT         |  890 |
+| LINESTRING    | 2969 |
+| POLYGON       |   34 |
 
 #### Quietness
 
@@ -96,7 +103,7 @@ leeds_quietness = sf::read_sf("https://github.com/ITSLeeds/cyclability/raw/main/
 plot(leeds_quietness["quietness"])
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
 
 ``` r
 leeds_quietness |>
