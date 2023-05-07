@@ -40,7 +40,7 @@ These datasets were taken from an area with the following bounding box:
 
 This area, representing a 1 km boundary around the University of Leeds (-1.556288, 53.80677) can be seen in OSM at the following URL: https://www.openstreetmap.org/#map=16/53.8068/-1.5563
 
-<!-- To prepare the input data we used the `osmium-tool` command line utility which can be installed on Ubuntu with the following command: -->
+To generate a GeoJSON version of the input data we used the `osmtogeojson` command line utility which can be installed on Ubuntu with the following command:
 
 ```bash
 sudo npm install -g osmtogeojson
@@ -81,14 +81,18 @@ osmtogeojson example-data/leeds.osm > example-data/leeds.geojson
 osmium cat -o example-data/leeds.geojson example-data/leeds.osm
 ```
 
+The first 10 keys in the OSM dataset that have at least one value are:
+
 ```{r}
 #| warning: false
+#| echo: false
 library(tidyverse)
 leeds_osm_osm = sf::read_sf("example-data/leeds.osm", layer = "lines")
 leeds_osm_geojson = sf::read_sf("example-data/leeds.geojson")
-names(leeds_osm_geojson)
-nrow(leeds_osm_geojson)
-nrow(leeds_osm_osm)
+leeds_osm_names = names(leeds_osm_geojson)
+leeds_osm_names[1:10]
+# nrow(leeds_osm_geojson)
+# nrow(leeds_osm_osm)
 ```
 
 The OSM data can be seen in the map below:
@@ -118,7 +122,7 @@ A simple model was used to find out the relationship between the quietness ratin
 ```{r}
 #| echo: false
 model_lm = lm(quietness ~ ridingSurface, data = leeds_quietness)
-model_tidy = broom::tidy(model_lm)
+model_tidy = broom::tidy(model_lm, conf.int = TRUE)
 intercept = model_tidy |>
   dplyr::filter(term == "(Intercept)") |>
   dplyr::pull(estimate)
@@ -128,21 +132,31 @@ intercept = model_tidy |>
 # model_tidy$term = ordered(model_tidy$term)
 ```
 
-```{r}
+```{r surface-quietness, fig.width = 6, fig.height = 4}
 #| echo: false
 model_tidy |>
   dplyr::filter(term != "(Intercept)") |>
-  mutate(estimate = estimate + intercept) |>
-  # mutate(term = gsub("ridingSurface", "", term)) |>
-  ggplot2::ggplot(ggplot2::aes(x = estimate, y = term)) +
-  ggplot2::geom_bar(stat = "identity") +
-  ggplot2::labs(x = "Quietness estimate", y = "ridingSurface (CycleStreets)")
+  # mutate(across(matches("est|conf"), function(x) x + intercept)) |>
+  mutate(term = gsub("ridingSurface", "", term)) |>
+  # ggplot2 call with confidence intervals:
+  ggplot2::ggplot(ggplot2::aes(x = term, y = estimate)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = conf.low, ymax = conf.high)) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Riding surface",
+    y = "Quietness rating effect size (larger is quieter)"
+    # ,
+    # title = "Relationship between riding surface and quietness rating"
+  )
 ```
 
 From this we can see that, as would be expected, living streets and pedestrianised areas are associated with the highest quietness ratings.
 
 ```{r}
-
+#| echo: false
+# remotes::install_cran()
+# model_brms = 
 ```
 
 ```{r}

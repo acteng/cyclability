@@ -42,7 +42,9 @@ This area, representing a 1 km boundary around the University of Leeds
 (-1.556288, 53.80677) can be seen in OSM at the following URL:
 https://www.openstreetmap.org/#map=16/53.8068/-1.5563
 
-<!-- To prepare the input data we used the `osmium-tool` command line utility which can be installed on Ubuntu with the following command: -->
+To generate a GeoJSON version of the input data we used the
+`osmtogeojson` command line utility which can be installed on Ubuntu
+with the following command:
 
 ``` bash
 sudo npm install -g osmtogeojson
@@ -67,137 +69,13 @@ osmtogeojson example-data/leeds.osm > example-data/leeds.geojson
 
 <!-- Convert this to GeoJSON with the following command (requires `osmium-tool`): -->
 
-``` r
-library(tidyverse)
-leeds_osm_osm = sf::read_sf("example-data/leeds.osm", layer = "lines")
-leeds_osm_geojson = sf::read_sf("example-data/leeds.geojson")
-names(leeds_osm_geojson)
-```
+The first 10 keys in the OSM dataset that have at least one value are:
 
-      [1] "area"                               "bicycle"                           
-      [3] "bicycle:backward:conditional"       "bicycle:conditional"               
-      [5] "bicycle:forward:conditional"        "bollard"                           
-      [7] "cycleway:buffer"                    "foot"                              
-      [9] "footway"                            "footway:surface"                   
-     [11] "handrail"                           "highway"                           
-     [13] "horse"                              "image"                             
-     [15] "incline"                            "indoor"                            
-     [17] "informal"                           "junction"                          
-     [19] "junction:ref"                       "kerb"                              
-     [21] "kerb:height"                        "lane_markings"                     
-     [23] "lanes"                              "lanes:backward"                    
-     [25] "lanes:bus"                          "lanes:bus:forward"                 
-     [27] "lanes:forward"                      "lanes:left"                        
-     [29] "lanes:psv"                          "lanes:psv:backward"                
-     [31] "lanes:psv:forward"                  "layer"                             
-     [33] "lcn"                                "level"                             
-     [35] "lit"                                "material"                          
-     [37] "maxheight"                          "maxspeed"                          
-     [39] "maxspeed:type"                      "maxweight:signed"                  
-     [41] "maxweightrating"                    "motor_vehicle"                     
-     [43] "motor_vehicle:backward:conditional" "motor_vehicle:conditional"         
-     [45] "motor_vehicle:forward:conditional"  "name"                              
-     [47] "noexit"                             "noname"                            
-     [49] "not:name"                           "not:name:note"                     
-     [51] "note"                               "old_name"                          
-     [53] "oneway"                             "oneway:bicycle"                    
-     [55] "oneway:bus"                         "opening_date"                      
-     [57] "operator"                           "operator:type"                     
-     [59] "operator:wikidata"                  "parking"                           
-     [61] "parking:lane:both"                  "parking:lane:left"                 
-     [63] "parking:lane:right"                 "paved"                             
-     [65] "police"                             "post_box:type"                     
-     [67] "postal_code"                        "proposed:busway"                   
-     [69] "proposed:crossing_ref"              "proposed:cycleway:left"            
-     [71] "proposed:demolished:highway"        "proposed:oneway"                   
-     [73] "proposed:sidewalk:left"             "proposed:sidewalk:right"           
-     [75] "proposed:traffic_calming"           "proposed:turn:lanes:forward"       
-     [77] "prow_ref"                           "psv"                               
-     [79] "psv:backward:conditional"           "psv:conditional"                   
-     [81] "psv:forward:conditional"            "psv:lanes"                         
-     [83] "public_transport"                   "ramp"                              
-     [85] "ramp:wheelchair"                    "ref"                               
-     [87] "ref:GB:usrn"                        "royal_cypher"                      
-     [89] "segregated"                         "separated"                         
-     [91] "service"                            "service_1"                         
-     [93] "service_times"                      "shoulder"                          
-     [95] "sidewalk"                           "sidewalk:both:surface"             
-     [97] "sidewalk:left"                      "sidewalk:right"                    
-     [99] "sidewalk:surface"                   "smoothness"                        
-    [101] "source"                             "source:maxheight"                  
-    [103] "source:maxspeed"                    "source:name"                       
-    [105] "source:old_name"                    "source:ref"                        
-    [107] "source_ref:maxheight"               "start_date"                        
-    [109] "step_count"                         "surface"                           
-    [111] "survey"                             "tactile_paving"                    
-    [113] "taxi"                               "temporary:oneway"                  
-    [115] "towpath"                            "tracktype"                         
-    [117] "traffic_calming"                    "traffic_signals"                   
-    [119] "traffic_signals:direction"          "traffic_signals:sound"             
-    [121] "traffic_signals:vibration"          "tunnel"                            
-    [123] "turn:lanes"                         "turn:lanes:backward"               
-    [125] "turn:lanes:forward"                 "website"                           
-    [127] "width"                              "wikidata"                          
-    [129] "wikipedia"                          "id"                                
-    [131] "abutters"                           "access"                            
-    [133] "access:delivery"                    "addr:city"                         
-    [135] "addr:housename"                     "addr:housenumber"                  
-    [137] "addr:postcode"                      "addr:street"                       
-    [139] "alt_name"                           "amenity"                           
-    [141] "backrest"                           "barrier"                           
-    [143] "bicycle_parking"                    "brand"                             
-    [145] "brand:wikidata"                     "brand:wikipedia"                   
-    [147] "bridge"                             "bus"                               
-    [149] "bus:lanes"                          "bus:lanes:backward"                
-    [151] "bus:lanes:forward"                  "bus_bay"                           
-    [153] "busway"                             "busway:left"                       
-    [155] "busway:opening_hours:backward"      "busway:opening_hours:right"        
-    [157] "busway:right"                       "button_operated"                   
-    [159] "capacity"                           "capacity:disabled"                 
-    [161] "cash_in"                            "check_date"                        
-    [163] "check_date:surface"                 "check_date:tactile_paving"         
-    [165] "colour"                             "construction"                      
-    [167] "construction:crossing_ref"          "covered"                           
-    [169] "created_by"                         "crossing"                          
-    [171] "crossing:island"                    "crossing:markings"                 
-    [173] "crossing_ref"                       "cycleway"                          
-    [175] "cycleway:both"                      "cycleway:est_width"                
-    [177] "cycleway:forward"                   "cycleway:forward:bicycle"          
-    [179] "cycleway:forward:lane"              "cycleway:forward:oneway"           
-    [181] "cycleway:forward:segregated"        "cycleway:forward:separation:right" 
-    [183] "cycleway:forward:surface"           "cycleway:left"                     
-    [185] "cycleway:left:bicycle"              "cycleway:left:lane"                
-    [187] "cycleway:left:oneway"               "cycleway:left:segregated"          
-    [189] "cycleway:left:separation"           "cycleway:left:separation:right"    
-    [191] "cycleway:left:surface"              "cycleway:right"                    
-    [193] "cycleway:right:bicycle"             "cycleway:right:lane"               
-    [195] "cycleway:right:oneway"              "cycleway:right:segregated"         
-    [197] "cycleway:right:separation:left"     "cycleway:right:separation:right"   
-    [199] "cycleway:right:surface"             "cycleway:segregated"               
-    [201] "cycleway:surface"                   "delivery"                          
-    [203] "description"                        "designation"                       
-    [205] "destination"                        "direction"                         
-    [207] "display"                            "disused:amenity"                   
-    [209] "emergency"                          "entrance"                          
-    [211] "est_width"                          "exit"                              
-    [213] "faces"                              "fee"                               
-    [215] "fixme"                              "local_ref"                         
-    [217] "lockable"                           "locked"                            
-    [219] "opening_hours"                      "road_marking"                      
-    [221] "support"                            "wheelchair"                        
-    [223] "geometry"                          
-
-``` r
-nrow(leeds_osm_geojson)
-```
-
-    [1] 3893
-
-``` r
-nrow(leeds_osm_osm)
-```
-
-    [1] 2969
+     [1] "area"                         "bicycle"                     
+     [3] "bicycle:backward:conditional" "bicycle:conditional"         
+     [5] "bicycle:forward:conditional"  "bollard"                     
+     [7] "cycleway:buffer"              "foot"                        
+     [9] "footway"                      "footway:surface"             
 
 The OSM data can be seen in the map below:
 
@@ -236,7 +114,7 @@ leeds_quietness |>
 A simple model was used to find out the relationship between the
 quietness rating and riding surface:
 
-![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](README_files/figure-commonmark/surface-quietness-1.png)
 
 From this we can see that, as would be expected, living streets and
 pedestrianised areas are associated with the highest quietness ratings.
