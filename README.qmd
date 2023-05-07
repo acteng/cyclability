@@ -40,6 +40,12 @@ These datasets were taken from an area with the following bounding box:
 
 This area, representing a 1 km boundary around the University of Leeds (-1.556288, 53.80677) can be seen in OSM at the following URL: https://www.openstreetmap.org/#map=16/53.8068/-1.5563
 
+<!-- To prepare the input data we used the `osmium-tool` command line utility which can be installed on Ubuntu with the following command: -->
+
+```bash
+sudo npm install -g osmtogeojson
+```
+
 #### OSM data
 
 ```{r}
@@ -55,12 +61,43 @@ sf::st_bbox(leeds_smallarea)
 
 OSM data was downloaded from overpass with the following command which uses `wget` to query the API for the bounding box:
   
-  ```{bash}
-  #| eval: false
-  wget -O example-data/leeds.osm "https://overpass-api.de/api/interpreter?data=[out:xml][timeout:25];(way[highway](53.797790,-1.571467,53.815759,-1.541108);node(w););out body;>;out skel qt;"
-  ```
+```bash
+ #| eval: false
+wget -O example-data/leeds.osm "https://overpass-api.de/api/interpreter?data=[out:xml][timeout:25];(way[highway](53.797790,-1.571467,53.815759,-1.541108);node(w););out body;>;out skel qt;"
+```
 
-  The output of the command above can be found in the `example-data` folder of this repo.
+The output of the command above can be found in the `example-data` folder of this repo.
+
+```{bash}
+#| eval: false
+osmtogeojson example-data/leeds.osm > example-data/leeds.geojson
+```
+
+<!-- Convert this to GeoJSON with the following command (requires `osmium-tool`): -->
+
+```{bash}
+#| echo: false
+#| eval: false
+osmium cat -o example-data/leeds.geojson example-data/leeds.osm
+```
+
+```{r}
+#| warning: false
+leeds_osm_osm = sf::read_sf("example-data/leeds.osm", layer = "lines")
+leeds_osm_geojson = sf::read_sf("example-data/leeds.geojson")
+names(leeds_osm_geojson)
+nrow(leeds_osm_geojson)
+nrow(leeds_osm_osm)
+```
+
+The OSM data can be seen in the map below:
+
+```{r}
+#| echo: false
+plot(sf::st_geometry(leeds_osm_osm))
+```
+
+The example dataset contains around 3k line segments and 200 keys with at least one value.
 
 #### Quietness
 
@@ -74,6 +111,8 @@ leeds_quietness |>
   dplyr::slice(1:3) |>
   knitr::kable()
 ```
+
+<!-- A simple random forest model was used to find out the relationship between the quietness rating and the following variables: -->
 
 ## Live examples
 
