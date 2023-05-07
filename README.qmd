@@ -3,6 +3,8 @@ format: gfm
 ---
 
 This repo contains ideas, code, and example data to estimate 'cyclability' on transport networks.
+At present it is focussed on cycling because there are more readily available datasets for cycling than for walking that we are aware of.
+However at some point we would like to extend this to walking and other modes, in which case the repo may be renamed (e.g. to `activability` if nobody comes up with a better name ; ).
 
 ## What is cyclability?
 

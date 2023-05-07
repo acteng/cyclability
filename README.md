@@ -1,6 +1,11 @@
 
 This repo contains ideas, code, and example data to estimate
-‘cyclability’ on transport networks.
+‘cyclability’ on transport networks. At present it is focussed on
+cycling because there are more readily available datasets for cycling
+than for walking that we are aware of. However at some point we would
+like to extend this to walking and other modes, in which case the repo
+may be renamed (e.g. to `activability` if nobody comes up with a better
+name ; ).
 
 ## What is cyclability?
 
@@ -98,19 +103,7 @@ is available at
 https://github.com/ITSLeeds/cyclability/raw/main/cyclestreets/leeds_quietness.geojson
 and is illustrated below:
 
-``` r
-leeds_quietness = sf::read_sf("https://github.com/ITSLeeds/cyclability/raw/main/cyclestreets/leeds_quietness.geojson")
-plot(leeds_quietness["quietness"])
-```
-
 ![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
-
-``` r
-leeds_quietness |>
-  sf::st_drop_geometry() |>
-  dplyr::slice(1:3) |>
-  knitr::kable()
-```
 
 | name              | ridingSurface      |      id | cyclableText | quietness | speedMph | speedKmph | pause | color    |
 |:------------------|:-------------------|--------:|:-------------|----------:|---------:|----------:|------:|:---------|
