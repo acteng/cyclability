@@ -68,6 +68,7 @@ osmtogeojson example-data/leeds.osm > example-data/leeds.geojson
 <!-- Convert this to GeoJSON with the following command (requires `osmium-tool`): -->
 
 ``` r
+library(tidyverse)
 leeds_osm_osm = sf::read_sf("example-data/leeds.osm", layer = "lines")
 leeds_osm_geojson = sf::read_sf("example-data/leeds.geojson")
 names(leeds_osm_geojson)
@@ -232,7 +233,13 @@ leeds_quietness |>
 | Hyde Place        | Residential street | 1709460 | Yes          |        60 |       15 |        24 |     0 | \#B06840 |
 | Buckingham Avenue | Residential street | 2956857 | Yes          |        40 |       15 |        24 |     0 | \#9295FF |
 
-<!-- A simple random forest model was used to find out the relationship between the quietness rating and the following variables: -->
+A simple model was used to find out the relationship between the
+quietness rating and riding surface:
+
+![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
+
+From this we can see that, as would be expected, living streets and
+pedestrianised areas are associated with the highest quietness ratings.
 
 ## Live examples
 
