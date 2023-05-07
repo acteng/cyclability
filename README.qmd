@@ -81,6 +81,14 @@ osmtogeojson example-data/leeds.osm > example-data/leeds.geojson
 osmium cat -o example-data/leeds.geojson example-data/leeds.osm
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+# Run with osmextract: https://github.com/ropensci/osmextract/issues/281
+remotes::install_dev("osmextract")
+leeds_osmextract = osmextract::oe_read("example-data/leeds.osm")
+```
+
 The first 10 keys in the OSM dataset that have at least one value are:
 
 ```{r}
@@ -145,7 +153,7 @@ model_tidy |>
   ggplot2::coord_flip() +
   ggplot2::labs(
     x = "Riding surface",
-    y = "Quietness rating effect size (larger is quieter)"
+    y = "Quietness rating effect size (low values are less cycleable)"
     # ,
     # title = "Relationship between riding surface and quietness rating"
   )
