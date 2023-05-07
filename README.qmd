@@ -138,11 +138,13 @@ leeds_quietness |>
   knitr::kable()
 ```
 
-A simple model was used to find out the relationship between the quietness rating and riding surface:
+A simple model was used to find out the relationship between the quietness rating and riding surface, resulting in the following plot:
 
 ```{r}
 #| echo: false
 model_lm = lm(quietness ~ ridingSurface, data = leeds_quietness)
+# Get the R squared value:
+model_lm_rsquared = summary(model_lm)$r.squared
 model_tidy = broom::tidy(model_lm, conf.int = TRUE)
 intercept = model_tidy |>
   dplyr::filter(term == "(Intercept)") |>
@@ -173,6 +175,111 @@ model_tidy |>
 ```
 
 From this we can see that, as would be expected, living streets and pedestrianised areas are associated with the highest quietness ratings.
+The model also reveals that, for the sample data in Leeds at least, the segment type alone can explain `r round(model_lm_rsquared * 100)`% of the variation in quietness ratings.
+The dependent variables shown in the plot above are produced by CycleStreets which were themselves derived from OSM data.
+Let's try to reproduce the quietness ratings using the OSM data directly.
+To do that, we first need to join the data from CycleStreets with the OSM data.
+
+The OSM data contains ids such as:
+
+```{r}
+leeds_osm_geojson$id[1:3]
+```
+
+The CycleStreets data contains ids such as:
+
+```{r}
+leeds_quietness$id[1:3]
+```
+
+After removing everything before and including the `/` character, the ids are the same, with the majority of the ids in the CycleStreets data present in the OSM data:
+
+```{r}
+leeds_osm_geojson$id = gsub(".*\\/", "", leeds_osm_geojson$id)
+summary(leeds_quietness$id %in% leeds_osm_geojson$id)
+```
+
+```{r}
+#| echo: false
+# Check to see if the OSM data has the same IDs as the CycleStreets data:
+leeds_osm_geojson_df = leeds_osm_geojson |>
+  sf::st_drop_geometry() |>
+  # Convert id column to integers:
+  dplyr::mutate(id = as.integer(id))
+leeds_quietness_joined = leeds_quietness |>
+  select(-name) |>
+  dplyr::left_join(leeds_osm_geojson_df, by = c("id" = "id"))
+```
+
+Of the 200+ keys in the OSM data, only a few appear frequently enough to be useful for modelling.
+The keys that most frequently have values are shown in the table below:
+
+```{r}
+#| echo: false
+all_keys_df = leeds_osm_geojson_df |>
+  dplyr::select(-id) |>
+  dplyr::mutate(across(everything(), as.character)) |>
+  tidyr::pivot_longer(cols = everything()) |>
+  dplyr::filter(!is.na(value)) |>
+  group_by(name) |>
+  dplyr::summarise(
+    n = n(),
+    most_common_value = names(which.max(table(value))),
+    most_common_value_count = max(table(value))
+    ) |>
+  dplyr::arrange(desc(n))
+most_common_keys_df = all_keys_df |>
+  dplyr::slice(1:20) 
+most_common_keys_df |>
+  knitr::kable()
+```
+
+Running the same model on the OSM data gives the following results and explains a higher proportion of the variation in quietness ratings: just over 90%.
+
+```{r}
+#| echo: false
+names_to_keep = c("quietness", "highway", "maxspeed", "bicycle")
+leeds_quietness_joined_minimal = leeds_quietness_joined[names_to_keep] |>
+  # Convert all columns, except quietness, to character:
+  mutate(across(-quietness, as.character)) |>
+  sf::st_drop_geometry()
+model_lm_osm = lm(quietness ~ ., data = leeds_quietness_joined_minimal)
+# Get the R squared value:
+model_lm_osm_rsquared = summary(model_lm_osm)$r.squared
+# model_lm_osm_rsquared
+```
+
+```{r}
+#| echo: false
+model_tidy = broom::tidy(model_lm_osm, conf.int = TRUE)
+intercept = model_tidy |>
+  dplyr::filter(term == "(Intercept)") |>
+  dplyr::pull(estimate)
+# Visualise the resulting model with ggplot2:
+# model_tidy$term = as.factor(model_tidy$term)
+# levels(model_tidy$term) = model_tidy$term[order(model_tidy$estimate)]
+# model_tidy$term = ordered(model_tidy$term)
+```
+
+```{r lm_osm, fig.width = 6, fig.height = 4}
+#| echo: false
+#| warning: false
+model_tidy |>
+  dplyr::filter(term != "(Intercept)") |>
+  # mutate(across(matches("est|conf"), function(x) x + intercept)) |>
+  mutate(term = gsub("highway", "", term)) |>
+  # ggplot2 call with confidence intervals:
+  ggplot2::ggplot(ggplot2::aes(x = term, y = estimate)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = conf.low, ymax = conf.high)) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Riding surface",
+    y = "Quietness rating effect size (low values are less cycleable)"
+    # ,
+    # title = "Relationship between riding surface and quietness rating"
+  )
+```
 
 ```{r}
 #| echo: false

@@ -112,12 +112,84 @@ and is illustrated below:
 | Buckingham Avenue | Residential street | 2956857 | Yes          |        40 |       15 |        24 |     0 | \#9295FF |
 
 A simple model was used to find out the relationship between the
-quietness rating and riding surface:
+quietness rating and riding surface, resulting in the following plot:
 
 ![](README_files/figure-commonmark/surface-quietness-1.png)
 
 From this we can see that, as would be expected, living streets and
 pedestrianised areas are associated with the highest quietness ratings.
+The model also reveals that, for the sample data in Leeds at least, the
+segment type alone can explain 67% of the variation in quietness
+ratings. The dependent variables shown in the plot above are produced by
+CycleStreets which were themselves derived from OSM data. Let’s try to
+reproduce the quietness ratings using the OSM data directly. To do that,
+we first need to join the data from CycleStreets with the OSM data.
+
+The OSM data contains ids such as:
+
+``` r
+leeds_osm_geojson$id[1:3]
+```
+
+    [1] "way/8094922"  "way/22770533" "way/25158101"
+
+The CycleStreets data contains ids such as:
+
+``` r
+leeds_quietness$id[1:3]
+```
+
+    [1] 1709456 1709460 2956857
+
+After removing everything before and including the `/` character, the
+ids are the same, with the majority of the ids in the CycleStreets data
+present in the OSM data:
+
+``` r
+leeds_osm_geojson$id = gsub(".*\\/", "", leeds_osm_geojson$id)
+summary(leeds_quietness$id %in% leeds_osm_geojson$id)
+```
+
+       Mode   FALSE    TRUE 
+    logical      33    2712 
+
+    Warning: There was 1 warning in `dplyr::mutate()`.
+    ℹ In argument: `id = as.integer(id)`.
+    Caused by warning:
+    ! NAs introduced by coercion to integer range
+
+Of the 200+ keys in the OSM data, only a few appear frequently enough to
+be useful for modelling. The keys that most frequently have values are
+shown in the table below:
+
+| name           |    n | most_common_value | most_common_value_count |
+|:---------------|-----:|:------------------|------------------------:|
+| highway        | 3358 | footway           |                    1038 |
+| name           | 1102 | Woodhouse Lane    |                      48 |
+| surface        |  815 | asphalt           |                     495 |
+| maxspeed       |  572 | 20 mph            |                     337 |
+| oneway         |  418 | yes               |                     376 |
+| source         |  382 | survey            |                     148 |
+| lanes          |  376 | 2                 |                     187 |
+| lit            |  364 | yes               |                     308 |
+| bicycle        |  336 | yes               |                     243 |
+| barrier        |  307 | gate              |                     159 |
+| access         |  271 | private           |                     138 |
+| foot           |  261 | yes               |                     163 |
+| crossing       |  203 | traffic_signals   |                     124 |
+| service        |  202 | parking_aisle     |                     138 |
+| tactile_paving |  197 | yes               |                     182 |
+| created_by     |  165 | JOSM              |                     159 |
+| motor_vehicle  |  150 | no                |                      89 |
+| ref            |  141 | A660              |                      60 |
+| incline        |  108 | up                |                      77 |
+| crossing_ref   |  102 | pelican           |                      85 |
+
+Running the same model on the OSM data gives the following results and
+explains a higher proportion of the variation in quietness ratings: just
+over 90%.
+
+![](README_files/figure-commonmark/lm_osm-1.png)
 
 ## Live examples
 
